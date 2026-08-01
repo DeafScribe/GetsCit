@@ -1,0 +1,121 @@
+:root {
+  --phosphor: #4dff6e;
+  --phosphor-dim: #1f8f38;
+  --bg: #04140a;
+  --bg-panel: #071d0e;
+  --error: #ff5c5c;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #000;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  color: var(--phosphor);
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.setup-panel {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-panel);
+  border: 1px solid var(--phosphor-dim);
+  border-radius: 6px;
+  padding: 28px 32px 32px;
+}
+
+h1 {
+  font-size: 22px;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
+}
+
+.lede {
+  color: var(--phosphor-dim);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+fieldset {
+  border: 1px solid var(--phosphor-dim);
+  border-radius: 4px;
+  padding: 14px 16px 18px;
+  margin: 0 0 18px;
+}
+
+legend {
+  padding: 0 6px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--phosphor-dim);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--phosphor-dim);
+  opacity: 0.8;
+  margin: 0 0 12px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  margin: 10px 0 4px;
+}
+
+label.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+label.check input { margin-top: 3px; }
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  background: #000;
+  border: 1px solid var(--phosphor-dim);
+  border-radius: 3px;
+  color: var(--phosphor);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+input:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 1px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  background: var(--phosphor-dim);
+  color: #04140a;
+  border: none;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 12px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+button[type="submit"]:hover { background: var(--phosphor); }
+
+.form-error {
+  color: var(--error);
+  font-size: 13px;
+  margin-top: 14px;
+}

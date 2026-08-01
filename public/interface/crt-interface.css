@@ -1,0 +1,232 @@
+/* Self-hosted font — drop VT323.woff2 (from fonts.google.com/specimen/VT323,
+   "Download family") into the same directory as this stylesheet. Using a
+   local @font-face instead of Google's CDN means no visitor IP address is
+   ever sent to a third party just to render the page — a real GDPR concern
+   (Google Fonts via CDN transmits IPs on load, before any consent could be
+   asked), separate from and unrelated to the cookie-consent question. */
+@font-face {
+  font-family: 'VT323';
+  src: url('VT323.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  --scanline-opacity: 0.10;
+  --glow-blur: 1.5px;
+  --font: 'VT323', 'Courier New', monospace;
+}
+
+/* GREEN phosphor (default) */
+body.theme-green {
+  --phosphor: #4dff6e;
+  --phosphor-dim: #1f8f38;
+  --bg: #04140a;
+  --bg-panel: #071d0e;
+}
+
+/* AMBER phosphor */
+body.theme-amber {
+  --phosphor: #ffb04d;
+  --phosphor-dim: #a8641f;
+  --bg: #170f04;
+  --bg-panel: #221507;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--phosphor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* ---- CRT SCREEN SHELL ---- */
+.crt {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  background: var(--bg);
+  border-radius: 18px;
+  padding: 28px 32px 20px;
+  box-shadow:
+    0 0 0 10px #0a0a0a,
+    0 0 0 12px #1c1c1c,
+    0 20px 60px rgba(0,0,0,0.7),
+    inset 0 0 90px rgba(0,0,0,0.75);
+  overflow: hidden;
+}
+
+.crt::before {
+  /* scanlines */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,var(--scanline-opacity)) 0px,
+    rgba(0,0,0,var(--scanline-opacity)) 1px,
+    transparent 2px,
+    transparent 3px
+  );
+  z-index: 3;
+}
+
+.crt::after {
+  /* vignette curvature */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+  z-index: 3;
+}
+
+/* Restrained glow, scoped per-element rather than blanket-applied.
+   Uses currentColor so dim (header) text gets a dim, tight glow and
+   bright (body) text gets a brighter but still tight glow — no
+   mismatched bright-shadow-under-dim-text haze. */
+.sys-title {
+  text-shadow: 0 0 2px currentColor, 0 0 6px var(--phosphor-dim);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .crt-content { animation: flicker 6s infinite; }
+}
+@keyframes flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.94; }
+  98% { opacity: 1; }
+}
+
+.crt-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- HEADER ---- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--phosphor-dim);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+
+.sys-title {
+  font-size: 30px;
+  letter-spacing: 3px;
+}
+
+.room-label {
+  font-size: 20px;
+  color: var(--phosphor-dim);
+}
+
+/* ---- PHOSPHOR TOGGLE SWITCH ---- */
+.phosphor-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--phosphor-dim);
+}
+
+.switch {
+  position: relative;
+  width: 46px;
+  height: 22px;
+  background: #111;
+  border: 1px solid var(--phosphor-dim);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.switch .knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 16px;
+  background: var(--phosphor);
+  box-shadow: 0 0 6px var(--phosphor);
+  border-radius: 2px;
+  transition: left 0.15s ease;
+}
+
+body.theme-amber .switch .knob { left: 26px; }
+
+/* ---- MESSAGE LIST ---- */
+.messages {
+  height: 300px;
+  overflow-y: auto;
+  font-size: 21px;
+  line-height: 1.35;
+  padding-right: 6px;
+}
+
+.messages::-webkit-scrollbar { width: 8px; }
+.messages::-webkit-scrollbar-thumb { background: var(--phosphor-dim); }
+.messages::-webkit-scrollbar-track { background: transparent; }
+
+.msg { margin-bottom: 12px; }
+.msg .meta {
+  color: var(--phosphor-dim);
+  text-shadow: 0 0 1px currentColor;
+}
+.msg .body {
+  color: var(--phosphor-dim);
+  opacity: 0.7;
+  white-space: pre-wrap;
+}
+
+/* ---- ENTRY LINE ---- */
+.entry {
+  border-top: 1px solid var(--phosphor-dim);
+  margin-top: 14px;
+  padding-top: 10px;
+  display: flex;
+  gap: 8px;
+  font-size: 21px;
+}
+
+.prompt { color: var(--phosphor-dim); white-space: nowrap; padding-top: 2px; }
+
+textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  color: var(--phosphor);
+  font-family: var(--font);
+  font-size: 21px;
+  line-height: 1.35;
+  caret-color: var(--phosphor);
+}
+
+textarea::placeholder { color: var(--phosphor-dim); opacity: 0.7; }
+
+.hint {
+  font-size: 14px;
+  color: var(--phosphor-dim);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+textarea:focus-visible,
+.switch:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 2px;
+}

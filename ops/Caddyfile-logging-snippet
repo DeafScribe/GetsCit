@@ -1,0 +1,37 @@
+# Access logging, per instance. Caddy logs to stdout by default, which
+# most process managers discard or rotate away quickly — `output file`
+# makes sure this actually persists somewhere you can go back to.
+#
+# This is the network-level log discussed alongside audit_log: it
+# records every request regardless of what the app made of it (static
+# assets, health checks, anonymous page loads included), which is
+# exactly why it stays a separate file rather than feeding into
+# audit_log — that table is for meaningful application events, this is
+# for "what hit the box."
+
+one.castletalk.com {
+    reverse_proxy localhost:3000
+    log {
+        output file /var/log/caddy/one.castletalk.com.log {
+            roll_size 10mb
+            roll_keep 10
+            roll_keep_for 720h   # ~30 days; adjust to taste, this is
+                                 # cheap disk, not the durable archive
+        }
+    }
+}
+
+two.castletalk.com {
+    reverse_proxy localhost:3000
+    log {
+        output file /var/log/caddy/two.castletalk.com.log {
+            roll_size 10mb
+            roll_keep 10
+            roll_keep_for 720h
+        }
+    }
+}
+
+# Repeat per instance. If this list grows long enough to feel tedious,
+# that's the signal to look at Caddy's `import` directive to factor the
+# log block out once rather than a reason to reach for anything heavier.

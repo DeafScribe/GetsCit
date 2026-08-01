@@ -1,0 +1,27 @@
+# /etc/fail2ban/jail.local
+#
+# fail2ban is a package install (`apt install fail2ban` on Debian/Ubuntu),
+# not custom code — this file is the only configuration a single-VM setup
+# actually needs. It watches sshd's own log for repeated failures and
+# adds a real firewall ban, closing the exact gap flagged when this
+# project first opened a public IP: SSH gets scanned by bots within
+# minutes of existing, and key-only auth alone doesn't stop someone from
+# trying anyway.
+
+[sshd]
+enabled = true
+port    = 22
+filter  = sshd
+logpath = /var/log/auth.log
+maxretry = 4
+findtime = 600      # 4 failures within 10 minutes...
+bantime  = 3600     # ...bans the IP for 1 hour
+
+# Escalating repeat offenders is worth turning on once this is running —
+# an IP that gets banned, waits it out, and comes back to fail again
+# clearly isn't a fumbled login. `bantime.increment` (fail2ban >= 0.10)
+# multiplies the ban duration on each repeat offense from the same IP:
+[DEFAULT]
+bantime.increment = true
+bantime.factor    = 4
+bantime.maxtime   = 1w

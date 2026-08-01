@@ -1,0 +1,16 @@
+# Instance databases — never commit these
+*.db
+*.db-wal
+*.db-shm
+
+# Backup working state
+backup-state/
+backup-archive/
+
+# Runtime
+node_modules/
+.env
+*.log
+
+# OS
+.DS_Store

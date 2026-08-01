@@ -1,0 +1,77 @@
+flowchart TD
+    Start([User at prompt]) --> GetCmd["getCommand / GetMenuChar()\nread one command letter"]
+    GetCmd --> Dispatch{"doRegular() dispatch\non command letter"}
+
+    Dispatch -->|G| Goto[doGoto]
+    Dispatch -->|R| Read[doRead]
+    Dispatch -->|E| Enter[doEnter]
+    Dispatch -->|K| Known[doKnown]
+    Dispatch -->|Z| Forget[doForget]
+    Dispatch -->|U| Ungoto[doUngoto]
+    Dispatch -->|C| Chat[doChat]
+    Dispatch -->|M| Meet[doMeet]
+    Dispatch -->|H| Help[doHelp]
+    Dispatch -->|L / T| LoginLogout[doLogin / doLogout]
+
+    subgraph ROOMDB["ROOM DATABASE  (ctdlroom.sys)"]
+        direction TB
+        getRoom["getRoom(rm)\nseek rm*RB_TOTAL_SIZE\nread + decrypt fixed record\n(name, flags, msg-slot array)"]
+        putRoom["putRoom(rm)\nencrypt record\nwrite name+flags+msg-slots back"]
+        noteRoom["noteRoom()\nscan room's msg-slot array\nfind newest msgNo <= cfg.newest"]
+        roomTab["roomTab[] (in-RAM index)\nname, flags, floor, last-msg\nbuilt at startup from all rooms"]
+        getRoom --> noteRoom --> roomTab
+    end
+
+    subgraph MSGDB["MESSAGE DATABASE  (ctdlmsg.sys)"]
+        direction TB
+        startAt["startAt(sector)\nseek sector*MSG_SECT_SIZE\nread + decrypt sector buffer"]
+        getMsgChar["getMsgChar()\nstream bytes from sector buffer\nauto-loads next sector at boundary"]
+        getMessage["getMessage()\nparse tagged fields (A,D,T,R,M...)\ninto msgBuf via getMsgChar"]
+        findMessage["findMessage(loc,id)\nstartAt(loc) + loop getMessage()\nuntil msgBuf.mbId == id"]
+        startAt --> getMsgChar --> getMessage
+        findMessage --> startAt
+    end
+
+    %% Goto flow
+    Goto -->|read current room record| getRoom
+    Goto -->|scan for unread| roomTab
+    Goto -->|"enter new room -> set thisRoom"| ScreenGoto["print room name/info to user"]
+
+    %% Read flow
+    Read -->|check room's msg slots| getRoom
+    Read -->|resolve slot -> sector/id| findMessage
+    getMessage --> ScreenRead["stream message text to terminal"]
+    Read --> ScreenRead
+
+    %% Enter flow
+    Enter --> MakeMsg["makeMessage()\nprompt user, buffer text in msgBuf"]
+    MakeMsg --> AppendMsg["write new message bytes\nto end of ctdlmsg.sys\n(sector/id assigned)"]
+    AppendMsg --> NoteAMsg["noteAMessage()\nwrite new msgNo into\ncurrent room's msg-slot array"]
+    NoteAMsg --> putRoom
+    putRoom --> noteRoom
+
+    %% Known rooms
+    Known -->|iterate index, no disk seek| roomTab
+    Known --> ScreenKnown["print room list / search matches"]
+
+    %% Forget
+    Forget -->|flag room as forgotten in user's log record| roomTab
+    Forget --> Goto
+
+    %% Ungoto - purely in-RAM room stack, no DB touch
+    Ungoto -->|pop last-room stack in RAM| ScreenUngoto["return to previous room"]
+
+    %% Chat/Meet/Help/Login-Logout - largely bypass room/msg DB
+    Chat --> ScreenChat["local terminal interaction only"]
+    Meet -->|read another user's bio record| ScreenMeet["print biography text"]
+    Help --> ScreenHelp["print static help file"]
+    LoginLogout -->|read/write user's log record\n(not room/msg DB)| ScreenAuth["prompt / confirm / update session state"]
+
+    ScreenGoto --> GetCmd
+    ScreenRead --> GetCmd
+    ScreenKnown --> GetCmd
+    ScreenUngoto --> GetCmd
+    ScreenChat --> GetCmd
+    ScreenMeet --> GetCmd
+    ScreenHelp --> GetCmd
+    ScreenAuth --> GetCmd

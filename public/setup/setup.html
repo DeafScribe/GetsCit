@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self';">
+<title>CITADEL // FIRST-RUN SETUP</title>
+<link rel="stylesheet" href="setup.css">
+</head>
+<body>
+
+  <main class="setup-panel">
+    <h1>System Setup</h1>
+    <p class="lede">
+      This instance hasn't been configured yet. This form runs
+      <strong>once</strong> — it creates the site's identity and its first
+      aide account. Once submitted, this page is permanently disabled;
+      further configuration happens through the aide admin panel.
+    </p>
+
+    <form id="setupForm" novalidate>
+
+      <fieldset>
+        <legend>Site identity</legend>
+
+        <label for="siteName">System name</label>
+        <input type="text" id="siteName" name="siteName" required
+               placeholder="e.g. CastleTalk One" maxlength="60">
+      </fieldset>
+
+      <fieldset>
+        <legend>Access policy</legend>
+
+        <label class="check">
+          <input type="checkbox" id="unlogReadOk" name="unlogReadOk">
+          Allow visitors to read messages before registering
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="unlogEnterOk" name="unlogEnterOk">
+          Allow visitors to post to the mail room before registering
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="nonAideRoomOk" name="nonAideRoomOk" checked>
+          Allow any registered user to create a room (unchecked: aides only)
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="chatEnabled" name="chatEnabled" checked>
+          Enable live chat with aides
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>First aide account</legend>
+        <p class="hint">
+          This account can create rooms, moderate content, reset user
+          passwords, and configure this instance going forward.
+        </p>
+
+        <label for="aideName">Aide username</label>
+        <input type="text" id="aideName" name="aideName" required
+               autocomplete="off" maxlength="32">
+
+        <label for="aidePassword">Aide password</label>
+        <input type="password" id="aidePassword" name="aidePassword" required
+               autocomplete="new-password" minlength="12">
+
+        <label for="aidePasswordConfirm">Confirm password</label>
+        <input type="password" id="aidePasswordConfirm" name="aidePasswordConfirm" required
+               autocomplete="new-password" minlength="12">
+      </fieldset>
+
+      <button type="submit">Complete setup</button>
+      <p id="formError" class="form-error" role="alert" hidden></p>
+    </form>
+  </main>
+
+<script src="setup.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  This meta tag mirrors the CSP the real server should send as an HTTP header
+  (a header is stronger — it can also set frame-ancestors, report-to, etc.,
+  which a meta tag cannot). Kept here so this standalone file enforces the
+  same policy it's demonstrating: no inline scripts, no third-party script
+  origins, fonts allowed only from Google's stylesheet+font hosts.
+-->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self';">
+<title>CITADEL // TERMINAL</title>
+<link rel="stylesheet" href="crt-interface.css">
+</head>
+<body class="theme-green">
+
+  <div class="crt">
+    <div class="crt-content">
+
+      <div class="topbar">
+        <div>
+          <div class="sys-title">CITADEL&gt;</div>
+          <div class="room-label">room: LOBBY&gt;</div>
+        </div>
+        <div class="phosphor-toggle">
+          <span id="modeLabel">GREEN</span>
+          <div class="switch" id="themeSwitch" role="button" tabindex="0" aria-label="Toggle amber phosphor mode">
+            <div class="knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="msg">
+          <div class="meta">&gt;&gt; sysop (07/23 09:14)</div>
+          <div class="body">Welcome back. 3 rooms have unread messages since your last visit.</div>
+        </div>
+        <div class="msg">
+          <div class="meta">&gt;&gt; jhenderson (07/23 09:41)</div>
+          <div class="body">Anyone else notice the new room list sorts differently now?</div>
+        </div>
+        <div class="msg">
+          <div class="meta">&gt;&gt; m_ortiz (07/23 10:02)</div>
+          <div class="body">Yeah — alphabetical instead of by last activity. Kind of prefer the old way honestly.</div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <span class="prompt">Enter&gt;</span>
+        <textarea rows="2" placeholder="Type your message, then press Enter to post..."></textarea>
+      </div>
+      <div class="hint">[G]oto  [R]ead  [E]nter  [K]nown rooms  [T]erminate</div>
+
+    </div>
+  </div>
+
+<script src="crt-interface.js"></script>
+
+</body>
+</html>
