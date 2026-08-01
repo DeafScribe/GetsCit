@@ -1,4 +1,4 @@
-# Citadel 2025
+# GetsCit
 
 Browser-based reimplementation of Citadel-86 v3.49.
 
